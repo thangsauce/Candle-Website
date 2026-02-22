@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>STORENAME Candles</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="index.html">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>STORENAME Candles</h1>
+          <p class="subtitle">Hand-poured • Travel-inspired scents</p>
+        </div>
+      </a>
+
+      <div class="header-actions">
+        <a class="btn desktop-only" href="#collection">Shop</a>
+
+        <button class="btn primary cart-btn" id="openCartBtn" type="button" aria-haspopup="dialog" aria-controls="cartDrawer">
+          Cart <span class="badge" id="cartCount">0</span>
+        </button>
+
+        <button class="btn desktop-only" id="openWishlistBtn" type="button">
+          ❤️ Wishlist <span class="badge" id="wishlistBadge">0</span>
+        </button>
+
+        <button class="btn hamburger-btn" id="mobileMenuBtn" type="button" aria-label="Open menu" aria-expanded="false">
+          <span class="ham-icon">
+            <span></span><span></span><span></span>
+          </span>
+        </button>
+      </div>
+
+      <!-- Mobile menu -->
+      <div class="mobile-menu" id="mobileMenu">
+        <a class="mobile-link" href="#collection" id="mobileShopLink">✈️ Shop Collection</a>
+        <a class="mobile-link" href="checkout.html">🛍️ Checkout</a>
+        <button class="mobile-link mobile-link-btn" id="mobileWishlistBtn" type="button">❤️ Wishlist <span class="badge" id="wishlistBadgeMobile">0</span></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap hero-card">
+        <p class="kicker">✈️ Destinations in a candle</p>
+        <h2>SLOGAN FOR STORE</h2>
+        <p class="muted">
+          Each candle captures a destination, a mood, and a signature blend of notes.
+        </p>
+
+        <button class="btn filter-toggle-btn" id="filterToggleBtn" type="button">
+          ⚙️ Filters &amp; Sort
+        </button>
+
+        <div class="hero-controls" id="heroControls">
+          <div class="control">
+            <label for="moodFilter">Filter by Mood</label>
+            <select id="moodFilter">
+              <option value="all">All moods</option>
+            </select>
+          </div>
+
+          <div class="control">
+            <label for="sortSelect">Sort</label>
+            <select id="sortSelect">
+              <option value="name-asc">Name (A → Z)</option>
+              <option value="name-desc">Name (Z → A)</option>
+              <option value="mood-asc">Mood (A → Z)</option>
+              <option value="mood-desc">Mood (Z → A)</option>
+              <option value="price-asc">Price (Low → High)</option>
+              <option value="price-desc">Price (High → Low)</option>
+            </select>
+          </div>
+
+          <div class="control toggle">
+            <label>Availability</label>
+            <label class="toggle-row">
+              <input type="checkbox" id="inStockOnly" />
+              <span>Only show in stock</span>
+            </label>
+          </div>
+
+          <div class="control">
+            <label for="searchInput">Search</label>
+            <input id="searchInput" type="text" placeholder="Search by name, destination, scent..." />
+          </div>
+        </div><!-- end hero-controls -->
+      </div>
+    </section>
+
+    <section class="wrap" id="collection">
+      <div class="section-title">
+        <h3>Signature Collection</h3>
+        <p class="muted">Destination • Mood • Notes</p>
+      </div>
+
+      <div class="grid" id="productGrid">
+        <!-- Cards are auto-generated from catalog.js -->
+      </div>
+    </section>
+  </main>
+
+  <!-- CART OVERLAY + DRAWER -->
+  <div class="overlay" id="overlay"></div>
+
+  <aside class="cart" id="cartDrawer" role="dialog" aria-modal="true" aria-label="Shopping cart">
+    <div class="cart-header">
+      <h3>Your Cart</h3>
+      <button class="icon-btn" id="closeCartBtn" type="button" aria-label="Close cart">✕</button>
+    </div>
+
+    <div class="cart-body">
+      <div class="cart-empty" id="cartEmpty">
+        <p class="muted">Your cart is empty.</p>
+        <p class="muted tiny">Add a candle to start your journey ✈️</p>
+      </div>
+
+      <ul class="cart-list" id="cartList" aria-label="Cart items"></ul>
+    </div>
+
+    <div class="cart-footer">
+      <div class="totals">
+        <div class="muted">Total</div>
+        <div class="total" id="cartTotal">$0.00</div>
+      </div>
+
+      <div class="cart-actions">
+        <button class="btn" id="clearCartBtn" type="button">Clear</button>
+        <a class="btn primary" id="checkoutBtn" href="checkout.html">Checkout</a>
+      </div>
+
+      <p class="muted tiny">(Demo cart) Hook this to a payment system later.</p>
+    </div>
+  </aside>
+
+  <!-- CART TOAST -->
+  <div class="toast" id="cartToast" hidden aria-live="polite" aria-atomic="true">
+    <div class="toast-top">
+      <b id="toastTitle">Added to cart</b>
+      <button class="toast-close" id="toastCloseBtn" type="button" aria-label="Close toast">✕</button>
+    </div>
+    <div class="toast-body" id="toastBody">Item added.</div>
+    <div class="toast-actions">
+      <button class="btn" id="toastViewCartBtn" type="button">View Cart</button>
+      <a class="btn primary" id="toastCheckoutBtn" href="checkout.html">Checkout</a>
+    </div>
+  </div>
+
+  <!-- WISHLIST DRAWER -->
+  <aside class="cart wishlist-drawer" id="wishlistDrawer" role="dialog" aria-modal="true" aria-label="Wishlist">
+    <div class="cart-header">
+      <h3>❤️ Wishlist</h3>
+      <button class="icon-btn" id="closeWishlistBtn" type="button" aria-label="Close wishlist">✕</button>
+    </div>
+    <div class="cart-body">
+      <div class="cart-empty" id="wishlistEmpty">
+        <p class="muted">No saved items yet.</p>
+        <p class="muted tiny">Tap the ♡ on any candle to save it ✈️</p>
+      </div>
+      <ul class="cart-list" id="wishlistList" aria-label="Wishlist items"></ul>
+    </div>
+    <div class="cart-footer">
+      <div class="cart-actions">
+        <button class="btn" id="clearWishlistBtn" type="button">Clear All</button>
+        <button class="btn primary" id="addAllToCartBtn" type="button">Add All to Cart</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <div class="footer-brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <div class="footer-brand-name">STORENAME Candles</div>
+          <p class="muted tiny">Hand-poured • Travel-inspired scents</p>
+        </div>
+      </div>
+
+      <div class="footer-links">
+        <div class="footer-col">
+          <div class="footer-col-title">Shop</div>
+          <a href="#collection">All Candles</a>
+          <a href="#collection">New Arrivals</a>
+          <a href="#collection">Bestsellers</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Info</div>
+          <a href="#">Shipping &amp; Returns</a>
+          <a href="#">Candle Care</a>
+          <a href="#">FAQ</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Contact</div>
+          <a href="mailto:ImAmunch@ucf.edu">ImAmunch@ucf.edu</a>
+          <a href="#">Instagram</a>
+          <a href="#">TikTok</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="wrap">
+        <p class="muted tiny">© 2026 STORENAME Candles. All rights reserved.</p>
+        <div class="footer-bottom-links">
+          <a href="#" class="muted tiny">Privacy Policy</a>
+          <a href="#" class="muted tiny">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="catalog.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

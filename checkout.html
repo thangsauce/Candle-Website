@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout • STORENAME Candles</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="index.html">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>STORENAME Candles</h1>
+          <p class="subtitle">Checkout</p>
+        </div>
+      </a>
+
+      <div class="header-actions">
+        <a class="btn" href="index.html">← Continue Shopping</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="section-title">
+      <h3>Checkout</h3>
+      <p class="muted">Review your order and enter your details</p>
+    </div>
+
+    <div class="checkout-layout">
+      <!-- ORDER SUMMARY -->
+      <section class="panel">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+          <h3 style="margin:0;">Order Summary</h3>
+          <button class="btn" id="clearCheckoutCartBtn" type="button">Clear Cart</button>
+        </div>
+
+        <div id="emptyCheckout" class="cart-empty" style="margin-top:12px;">
+          <p class="muted">Your cart is empty.</p>
+          <p class="muted tiny">Go back and add a candle first.</p>
+          <div style="margin-top:10px;">
+            <a class="btn primary" href="index.html">Shop Candles</a>
+          </div>
+        </div>
+
+        <ul class="cart-list" id="summaryList" hidden></ul>
+
+        <!-- Totals -->
+        <div class="kv" id="totalsBox" hidden style="display:grid; gap:8px;">
+          <div style="display:flex; justify-content:space-between; gap:10px;">
+            <div class="muted">Subtotal</div>
+            <div id="subtotalAmt">$0.00</div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; gap:10px;">
+            <div class="muted">Shipping</div>
+            <div id="shippingAmt">$0.00</div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; gap:10px; padding-top:10px; border-top:1px solid rgba(42,42,53,.75);">
+            <div class="muted">Total</div>
+            <div class="total" id="summaryTotal">$0.00</div>
+          </div>
+        </div>
+
+        <p class="muted tiny" style="margin:10px 0 0;">
+          Tip: You can edit quantities here before placing your order.
+        </p>
+      </section>
+
+      <!-- CUSTOMER FORM -->
+      <section class="panel">
+        <h3>Your Details</h3>
+
+        <form class="form" id="checkoutForm">
+          <div class="row">
+            <label class="muted tiny" for="fullName">Full Name</label>
+            <input id="fullName" required placeholder="Your name" />
+          </div>
+
+          <div class="row">
+            <label class="muted tiny" for="email">Email</label>
+            <input id="email" type="email" required placeholder="you@example.com" />
+          </div>
+
+          <div class="row">
+            <label class="muted tiny" for="fulfillment">Fulfillment</label>
+            <select id="fulfillment">
+              <option value="pickup">Pickup</option>
+              <option value="shipping">Shipping</option>
+            </select>
+          </div>
+
+          <div class="row">
+            <label class="muted tiny" for="address">Address (if shipping)</label>
+            <textarea id="address" placeholder="Street, City, State, ZIP"></textarea>
+          </div>
+
+          <div class="row">
+            <label class="muted tiny" for="notes">Order Notes</label>
+            <textarea id="notes" placeholder="Gift note, preferences, etc."></textarea>
+          </div>
+
+          <div class="cart-actions">
+            <a class="btn" href="index.html">Back</a>
+            <button class="btn primary" type="submit">Place Order (Demo)</button>
+          </div>
+
+          <p class="muted tiny" style="margin:0;">
+            Demo checkout. Connect Stripe/PayPal later.
+          </p>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <div class="footer-brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <div class="footer-brand-name">STORENAME Candles</div>
+          <p class="muted tiny">Hand-poured • Travel-inspired scents</p>
+        </div>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <div class="footer-col-title">Shop</div>
+          <a href="index.html">All Candles</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Info</div>
+          <a href="#">Shipping &amp; Returns</a>
+          <a href="#">FAQ</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Contact</div>
+          <a href="mailto:ImAmunch@ucf.edu">ImAmunch@ucf.edu</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="wrap">
+        <p class="muted tiny">© 2026 STORENAME Candles. All rights reserved.</p>
+        <div class="footer-bottom-links">
+          <a href="#" class="muted tiny">Privacy Policy</a>
+          <a href="#" class="muted tiny">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="catalog.js"></script>
+  <script>
+    const CART_KEY = "STORENAME_cart_v1";
+    const CATALOG = window.CATALOG || {};
+    const SHIPPING_FLAT = 5.99;
+
+    const money = (n) => `$${Number(n).toFixed(2)}`;
+
+    function loadCart() {
+      try {
+        const raw = localStorage.getItem(CART_KEY);
+        const parsed = raw ? JSON.parse(raw) : {};
+        return (parsed && typeof parsed === "object") ? parsed : {};
+      } catch {
+        return {};
+      }
+    }
+
+    function saveCart(cart) {
+      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    }
+
+    function computeSubtotal(cart) {
+      let subtotal = 0;
+      for (const [id, item] of Object.entries(cart)) {
+        const p = CATALOG[id];
+        if (!p) continue;
+        subtotal += item.qty * p.price;
+      }
+      return subtotal;
+    }
+
+    // DOM
+    const emptyCheckout = document.getElementById("emptyCheckout");
+    const summaryList = document.getElementById("summaryList");
+    const totalsBox = document.getElementById("totalsBox");
+    const subtotalAmt = document.getElementById("subtotalAmt");
+    const shippingAmt = document.getElementById("shippingAmt");
+    const summaryTotal = document.getElementById("summaryTotal");
+    const clearCheckoutCartBtn = document.getElementById("clearCheckoutCartBtn");
+    const fulfillmentSel = document.getElementById("fulfillment");
+    const addressEl = document.getElementById("address");
+
+    let cart = loadCart();
+
+    function hasItems(cart) {
+      return Object.entries(cart).some(([id, item]) => CATALOG[id] && item.qty > 0);
+    }
+
+    function getShippingCost() {
+      return fulfillmentSel.value === "shipping" ? SHIPPING_FLAT : 0;
+    }
+
+    function setQty(id, qty) {
+      if (qty <= 0) delete cart[id];
+      else cart[id] = { qty };
+      saveCart(cart);
+      renderSummary();
+    }
+
+    function clearCart() {
+      cart = {};
+      saveCart(cart);
+      renderSummary();
+    }
+
+    function renderSummary() {
+      summaryList.innerHTML = "";
+
+      const entries = Object.entries(cart)
+        .filter(([id, item]) => CATALOG[id] && item.qty > 0)
+        .sort(([aId], [bId]) => (CATALOG[aId].name || "").localeCompare(CATALOG[bId].name || ""));
+
+      if (entries.length === 0) {
+        emptyCheckout.hidden = false;
+        summaryList.hidden = true;
+        totalsBox.hidden = true;
+        return;
+      }
+
+      emptyCheckout.hidden = true;
+      summaryList.hidden = false;
+      totalsBox.hidden = false;
+
+      for (const [id, item] of entries) {
+        const p = CATALOG[id];
+
+        const li = document.createElement("li");
+        li.className = "cart-item";
+        li.innerHTML = `
+          <div class="cart-item-top">
+            <div>
+              <h4>${p.name}</h4>
+              <p class="sub">${p.mood} • ${p.destination}</p>
+            </div>
+            <div style="text-align:right;">
+              <div class="sub">${money(p.price)} each</div>
+              <button class="remove" type="button" data-action="remove" data-id="${id}">Remove</button>
+            </div>
+          </div>
+
+          <div class="qty-row">
+            <div class="qty-controls">
+              <button class="qty-btn" type="button" data-action="dec" data-id="${id}">−</button>
+              <div class="qty">${item.qty}</div>
+              <button class="qty-btn" type="button" data-action="inc" data-id="${id}">+</button>
+            </div>
+
+            <div class="sub">
+              Line: <b>${money(p.price * item.qty)}</b>
+            </div>
+          </div>
+        `;
+        summaryList.appendChild(li);
+      }
+
+      const subtotal = computeSubtotal(cart);
+      const shipping = getShippingCost();
+      const total = subtotal + shipping;
+
+      subtotalAmt.textContent = money(subtotal);
+      shippingAmt.textContent = money(shipping);
+      summaryTotal.textContent = money(total);
+    }
+
+    // Qty / remove buttons
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest("button");
+      if (!btn) return;
+
+      const action = btn.dataset.action;
+      const id = btn.dataset.id;
+      if (!action || !id) return;
+
+      const currentQty = cart[id]?.qty ?? 0;
+
+      if (action === "inc") setQty(id, currentQty + 1);
+      if (action === "dec") setQty(id, currentQty - 1);
+      if (action === "remove") setQty(id, 0);
+    });
+
+    clearCheckoutCartBtn.addEventListener("click", () => {
+      if (!hasItems(cart)) return;
+      clearCart();
+    });
+
+    // Update totals when fulfillment changes
+    fulfillmentSel.addEventListener("change", () => {
+      renderSummary();
+    });
+
+    // Submit (demo)
+    document.getElementById("checkoutForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      if (!hasItems(cart)) {
+        alert("Your cart is empty.");
+        return;
+      }
+
+      if (fulfillmentSel.value === "shipping") {
+        const addr = addressEl.value.trim();
+        if (addr.length < 8) {
+          alert("Please enter a shipping address.");
+          return;
+        }
+      }
+
+      const subtotal = computeSubtotal(cart);
+      const shipping = getShippingCost();
+
+      // Build order object and store in sessionStorage for confirmation page
+      const orderNum = String(Math.floor(100000 + Math.random() * 900000));
+      const items = Object.entries(cart)
+        .filter(([id, item]) => CATALOG[id] && item.qty > 0)
+        .map(([id, item]) => ({ id, qty: item.qty }));
+
+      const order = {
+        orderNum,
+        items,
+        subtotal,
+        fulfillment: fulfillmentSel.value,
+        address: document.getElementById("address").value.trim(),
+        notes: document.getElementById("notes").value.trim(),
+        name: document.getElementById("fullName").value.trim(),
+        email: document.getElementById("email").value.trim(),
+      };
+
+      try { sessionStorage.setItem("STORENAME_order", JSON.stringify(order)); } catch {}
+
+      // Clear cart and redirect
+      cart = {};
+      saveCart(cart);
+      window.location.href = "confirmation.html";
+    });
+
+    renderSummary();
+  </script>
+</body>
+</html>

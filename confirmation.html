@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Confirmed • STORENAME Candles</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .confirm-wrap{
+      max-width: 620px;
+      margin: 48px auto;
+      padding: 0 18px 60px;
+    }
+    .confirm-hero{
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .confirm-icon{
+      font-size: 52px;
+      margin-bottom: 12px;
+      display: block;
+      animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    @keyframes popIn{
+      from{ transform: scale(0.4); opacity: 0; }
+      to{ transform: scale(1); opacity: 1; }
+    }
+    .confirm-hero h2{
+      margin: 0 0 8px;
+      font-size: clamp(22px, 4vw, 32px);
+    }
+    .confirm-hero p{ margin: 0; }
+
+    .confirm-card{
+      background: rgba(23,23,29,.78);
+      border: 1px solid rgba(42,42,53,.9);
+      border-radius: var(--radius);
+      box-shadow: 0 12px 26px rgba(0,0,0,.28);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .confirm-card-header{
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(42,42,53,.75);
+      font-weight: 900;
+      font-size: 13px;
+      letter-spacing: .4px;
+      text-transform: uppercase;
+      color: rgba(243,243,245,.55);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .order-number{
+      font-family: monospace;
+      color: var(--accent);
+      font-size: 13px;
+    }
+    .confirm-items{
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .confirm-item{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(42,42,53,.5);
+    }
+    .confirm-item:last-child{ border-bottom: none; }
+    .confirm-item-name{ font-weight: 700; font-size: 14px; margin: 0 0 2px; }
+    .confirm-item-sub{ font-size: 12px; color: var(--muted); margin: 0; }
+    .confirm-item-price{ font-weight: 900; white-space: nowrap; }
+
+    .confirm-totals{
+      padding: 14px 16px;
+      border-top: 1px solid rgba(42,42,53,.75);
+      display: grid;
+      gap: 8px;
+    }
+    .confirm-row{
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+    }
+    .confirm-row.total{
+      font-weight: 900;
+      font-size: 16px;
+      border-top: 1px solid rgba(42,42,53,.75);
+      padding-top: 10px;
+      margin-top: 2px;
+    }
+
+    .confirm-meta{
+      padding: 14px 16px;
+    }
+    .meta-grid{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .meta-item label{
+      display: block;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: rgba(243,243,245,.45);
+      margin-bottom: 4px;
+    }
+    .meta-item span{
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .confirm-actions{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .stripe-note{
+      text-align: center;
+      margin-top: 20px;
+      padding: 12px 16px;
+      background: rgba(255,210,125,.06);
+      border: 1px dashed rgba(255,210,125,.25);
+      border-radius: 12px;
+      font-size: 12px;
+      color: rgba(243,243,245,.5);
+    }
+  </style>
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="index.html">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>STORENAME Candles</h1>
+          <p class="subtitle">Order Confirmed</p>
+        </div>
+      </a>
+      <div class="header-actions">
+        <a class="btn primary" href="index.html">← Keep Shopping</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="confirm-wrap">
+    <div class="confirm-hero">
+      <span class="confirm-icon">✈️</span>
+      <h2>Your order is on its way!</h2>
+      <p class="muted">Thanks for shopping at STORENAME. You'll receive a confirmation email shortly.</p>
+    </div>
+
+    <!-- Order summary card -->
+    <div class="confirm-card">
+      <div class="confirm-card-header">
+        <span>Order Summary</span>
+        <span class="order-number" id="orderNumber">#WW-000000</span>
+      </div>
+      <ul class="confirm-items" id="confirmItems"></ul>
+      <div class="confirm-totals" id="confirmTotals"></div>
+    </div>
+
+    <!-- Customer info card -->
+    <div class="confirm-card">
+      <div class="confirm-card-header">Your Details</div>
+      <div class="confirm-meta">
+        <div class="meta-grid" id="confirmMeta"></div>
+      </div>
+    </div>
+
+    <div class="confirm-actions">
+      <a class="btn" href="index.html">← Back to Shop</a>
+      <button class="btn primary" onclick="window.print()">🖨️ Print Receipt</button>
+    </div>
+
+    <div class="stripe-note">
+      🔧 Demo mode — connect Stripe or PayPal to process real payments.
+    </div>
+  </main>
+
+  <script src="catalog.js"></script>
+  <script>
+    const CATALOG = window.CATALOG || {};
+    const money = (n) => `$${Number(n).toFixed(2)}`;
+    const SHIPPING_FLAT = 5.99;
+
+    // Read order data passed from checkout
+    let order = null;
+    try {
+      const raw = sessionStorage.getItem("STORENAME_order");
+      order = raw ? JSON.parse(raw) : null;
+    } catch {}
+
+    if (!order) {
+      // No order data — redirect home
+      window.location.href = "index.html";
+    } else {
+      // Render order number
+      document.getElementById("orderNumber").textContent = "#WW-" + order.orderNum;
+
+      // Render items
+      const itemsList = document.getElementById("confirmItems");
+      for (const item of order.items) {
+        const p = CATALOG[item.id];
+        if (!p) continue;
+        const li = document.createElement("li");
+        li.className = "confirm-item";
+        li.innerHTML = `
+          <div>
+            <p class="confirm-item-name">${p.name}</p>
+            <p class="confirm-item-sub">${p.mood} • ${money(p.price)} × ${item.qty}</p>
+          </div>
+          <div class="confirm-item-price">${money(p.price * item.qty)}</div>
+        `;
+        itemsList.appendChild(li);
+      }
+
+      // Render totals
+      const totalsEl = document.getElementById("confirmTotals");
+      const shipping = order.fulfillment === "shipping" ? SHIPPING_FLAT : 0;
+      totalsEl.innerHTML = `
+        <div class="confirm-row"><span class="muted">Subtotal</span><span>${money(order.subtotal)}</span></div>
+        <div class="confirm-row"><span class="muted">Shipping</span><span>${money(shipping)}</span></div>
+        <div class="confirm-row total"><span>Total</span><span>${money(order.subtotal + shipping)}</span></div>
+      `;
+
+      // Render customer meta
+      const metaEl = document.getElementById("confirmMeta");
+      metaEl.innerHTML = `
+        <div class="meta-item"><label>Name</label><span>${order.name}</span></div>
+        <div class="meta-item"><label>Email</label><span>${order.email}</span></div>
+        <div class="meta-item"><label>Fulfillment</label><span>${order.fulfillment === "shipping" ? "📦 Shipping" : "🏪 Pickup"}</span></div>
+        ${order.address ? `<div class="meta-item"><label>Address</label><span>${order.address}</span></div>` : ""}
+        ${order.notes ? `<div class="meta-item"><label>Notes</label><span>${order.notes}</span></div>` : ""}
+      `;
+
+      // Clear the sessionStorage order after rendering
+      sessionStorage.removeItem("STORENAME_order");
+    }
+  </script>
+</body>
+</html>
